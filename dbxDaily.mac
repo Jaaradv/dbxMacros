@@ -2,24 +2,26 @@
 	Ocean Green Village Dailys
 	
 	Written By: Jaara
-	Date Written: 31 July 2021
-	
+	Date Written: 2 August 2021
+	Revision:
+		2.0: Changed InvSlots to be ${FindItem[<Item>].InvSlot} to make items not position sensative.
+			Refactored code to be more readable.
+			Added functions.
+			Switched to event based rather than function based
+		
+		
 	Description:
-		Walk close to the NPCs, type in /mac dbxDaily [quest]
+		Walk close to the NPCs, type in /mac dbxDaily2, then /echo [quest]
 		Quests are Shrimp, Carrots, Cucumbers, Radish, Saibaman, Vegetables
 		
 		You should probably make a social for each command
-		/mac dbxDaily carrots
-		/mac dbxDaily shrimp
-		/mac dbxDaily cucumbers
-		/mac dbxDaily radish
-		/mac dbxDaily saibaman
-		/mac dbxDaily vegetables
+		/echo shrimping
+		/echo radishing
+		/echo saibamaning
+		/echo cucumbering
+		/echo carroting
+		/echo vegetabling
 		
-		example: /mac dbxDaily carrots
-			this will run the carrots turn in
-			
-			it will attempt to get close enough to the npc to turn in the items, but wont jump over the fences.
 
 	Store Carrots/Radishes/Shrimp/Saibaman Brains/Cucumbers in Pack #9
 	
@@ -36,246 +38,191 @@
 		Pickle Juice: Pack#8 Slot #3
 		Horse Radish: Pack#8 Slot #4
 
-	Place Rewards from each NPC in the boss bag, doesn't matter exactly which slot, as long as they're Pack#8 Slots #5, #6, #7, #8
+	Place Rewards from each NPC in the boss bag, doesn't matter exactly which slot, as long as they're Pack#8 Slots #5, #6, #dlypressGiveButton, #8
 **|
+
+#turbo 1
+
+#Event Shrimping "[MQ2] shrimping"
+#Event Radishing "[MQ2] radishing"
+#Event Saibamaning "[MQ2] saibamaning"
+#Event Cucumbering "[MQ2] cucumbering"
+#Event Carroting "[MQ2] carroting"
+#Event Vegetabling "[MQ2] vegetabling"
+#Event NoTaskAvailable		"#*#Im sorry #1#"
 
 sub main()
 	| ItemSlot Definations
 	
-	/if (!${Defined[sltCarrot]}) /declare sltCarrot int outer ${InvSlot[Pack9].Item.Item[1].InvSlot}
-	/if (!${Defined[sltRadish]}) /declare sltRadish int outer ${InvSlot[Pack9].Item.Item[2].InvSlot}
-	/if (!${Defined[sltShrimp]}) /declare sltShrimp int outer ${InvSlot[Pack9].Item.Item[3].InvSlot}
-	/if (!${Defined[sltSaibaman]}) /declare sltSaibaman int outer ${InvSlot[Pack9].Item.Item[4].InvSlot}
-	/if (!${Defined[sltCucumber]}) /declare sltCucumber int outer ${InvSlot[Pack9].Item.Item[5].InvSlot}
+	/if (!${Defined[sltCarrot]}) /declare sltCarrot int outer ${FindItem[Clockwork Carrot].InvSlot}
+	/if (!${Defined[sltRadish]}) /declare sltRadish int outer ${FindItem[Raging Radish Heart].InvSlot}
+	/if (!${Defined[sltShrimp]}) /declare sltShrimp int outer ${FindItem[Small Shrimp].InvSlot}
+	/if (!${Defined[sltSaibaman]}) /declare sltSaibaman int outer ${FindItem[Saibaman Brain].InvSlot}
+	/if (!${Defined[sltCucumber]}) /declare sltCucumber int outer ${FindItem[A Cucumber].InvSlot}
 	
-	/if (!${Defined[sltJuice]}) /declare sltJuice int outer ${InvSlot[Pack9].Item.Item[6].InvSlot}
+	/if (!${Defined[sltJuice]}) /declare sltJuice int outer ${FindItem[Icy Cold Saibaman Juice].InvSlot}
 
-	/if (!${Defined[sltMug]}) /declare sltMug int outer ${InvSlot[Pack8].Item.Item[1].InvSlot}
-	/if (!${Defined[sltJumbo]}) /declare sltJumbo int outer ${InvSlot[Pack8].Item.Item[2].InvSlot}
-	/if (!${Defined[sltPickle]}) /declare sltPickle int outer ${InvSlot[Pack8].Item.Item[3].InvSlot}
-	/if (!${Defined[sltHorse]}) /declare sltHorse int outer ${InvSlot[Pack8].Item.Item[4].InvSlot}
+	/if (!${Defined[sltMug]}) /declare sltMug int outer ${FindItem[King Coldone].InvSlot}
+	/if (!${Defined[sltJumbo]}) /declare sltJumbo int outer ${FindItem[Jumbo].InvSlot}
+	/if (!${Defined[sltPickle]}) /declare sltPickle int outer ${FindItem[Possessed Pickle].InvSlot}
+	/if (!${Defined[sltHorse]}) /declare sltHorse int outer ${FindItem[Raw Horse].InvSlot}
 
-	/if (!${Defined[sltCutCarrots]}) /declare sltCutCarrots int outer ${InvSlot[Pack8].Item.Item[5].InvSlot}
-	/if (!${Defined[sltBoiledShrimp]}) /declare sltBoiledShrimp int outer ${InvSlot[Pack8].Item.Item[6].InvSlot}
-	/if (!${Defined[sltPickleSauce]}) /declare sltPickleSauce int outer ${InvSlot[Pack8].Item.Item[7].InvSlot}
-	/if (!${Defined[sltChoppedRadish]}) /declare sltChoppedRadish int outer ${InvSlot[Pack8].Item.Item[8].InvSlot}
+	/if (!${Defined[sltCutCarrots]}) /declare sltCutCarrots int outer ${FindItem[Cut Carrots].InvSlot}
+	/if (!${Defined[sltBoiledShrimp]}) /declare sltBoiledShrimp int outer ${FindItem[Boiled Shrimp].InvSlot}
+	/if (!${Defined[sltPickleSauce]}) /declare sltPickleSauce int outer ${FindItem[Pickle Sauce].InvSlot}
+	/if (!${Defined[sltChoppedRadish]}) /declare sltChoppedRadish int outer ${FindItem[Chopped Radish].InvSlot}
 	
-	| Calls
-	/if (${Param0.Equal[shrimp]}) /call shrimp
-	/if (${Param0.Equal[carrots]}) /call carrots
-	/if (${Param0.Equal[cucumbers]}) /call cucumbers
-	/if (${Param0.Equal[radish]}) /call radish
-	/if (${Param0.Equal[saibaman]}) /call saibaman
-	/if (${Param0.Equal[salad]}) /call vegetables
-	/if (${Param0.Equal[taketask]}) /call taketask
+	|delays
+	/if (!${Defined[dlypressGiveButton]}) /declare dlypressGiveButton int outer 5
+	/if (!${Defined[dlyTaskAccept]}) /declare dlyTaskAccept int outer 10
+	
+	/echo Starting Daily Quest Macro
+	:MainLoop
+		/doevents
+		/delay 1s
+	/goto :MainLoop
 	
 /return
 
 
-sub shrimp()
+sub Event_Shrimping()
 	/tar Krill In
-	:MoveToKrillin
-	/if (${Target.Distance}>30) {
-		/delay 3
-		/moveto id ${Target.ID}
-		/goto :MoveToKrillin
-	}
+	/call moveToTarget
 	
 	/delay 3
 	/say shrimps
-	/delay 5
-	/call taketask
+	
+	/delay ${dlyTaskAccept}
+	/doevents |stop macro if task is unavailable
+	/call pressTaskAcceptButton |press accept task button
 
 	/declare handin int local
 	/for handin 1 to 4
-		/ctrlkey /itemnotify ${sltShrimp} leftmouseup
-		/click left target
-		/delay 7
+		/call handItemFromSlot ${sltShrimp}
 	/next handin
 	
-	/delay 3
-	/notify GiveWnd GVW_Give_Button leftmouseup
+	/call pressGiveButton |press the Give button
 
-	/delay 5
-	/ctrlkey /itemnotify ${sltJumbo} leftmouseup
-	/click left target
-	/delay 5
-	/notify GiveWnd GVW_Give_Button leftmouseup
+	/call handItemFromSlot ${sltJumbo}
 	
-	| Place shrimp in bag
-	/delay 5
-	/itemnotify ${InvSlot[Pack8].Item.Item[5].InvSlot} leftmousedown
-	
-
+	/call pressGiveButton |press the Give button
 /return
 
-sub carrots()
+sub Event_Carroting()
 	/tar Kak Carrot
-	:MoveToKakCarrot
-	/if (${Target.Distance}>30) {
-		/delay 3
-		/moveto id ${Target.ID}
-		/goto :MoveToKakCarrot
-	}
+	/call moveToTarget
 	
 	/delay 3
 	/say carrots
-	/delay 5
-	/call taketask
+	
+	/delay ${dlyTaskAccept}
+	/doevents |stop macro if task is unavailable
+	/call pressTaskAcceptButton |press accept task button
 
 	/declare handin int local
 	/for handin 1 to 4
-		/ctrlkey /itemnotify ${sltCarrot} leftmouseup
-		/click left target
-		/delay 7
+		/call handItemFromSlot ${sltCarrot}
 	/next handin
 	
-	/delay 3
-	/notify GiveWnd GVW_Give_Button leftmouseup
-
+	/call pressGiveButton |press the Give button
 /return
 
-sub cucumbers()
+sub Event_Cucumbering()
 	/tar Picco Lo
-	:MoveToPiccolo
-	/if (${Target.Distance}>30) {
-		/delay 3
-		/moveto id ${Target.ID}
-		/goto :MoveToPiccolo
-	}
+	/call moveToTarget
 	
 	/delay 3
 	/say cucumbers
-	/delay 5
-	/call taketask
+	
+	/delay ${dlyTaskAccept}
+	/doevents |stop macro if task is unavailable
+	/call pressTaskAcceptButton |press accept task button
 
 	/declare handin int local
 	/for handin 1 to 4
-		/ctrlkey /itemnotify ${sltCucumber} leftmouseup
-		/click left target
-		/delay 7
+		/call handItemFromSlot ${sltCucumber}
 	/next handin
 	
-	/delay 3
-	/notify GiveWnd GVW_Give_Button leftmouseup
+	/call pressGiveButton |press the Give button
 
-	/delay 5
-	/ctrlkey /itemnotify ${sltPickle} leftmouseup
-	/click left target
-	/delay 5
-	/notify GiveWnd GVW_Give_Button leftmouseup
+	/call handItemFromSlot ${sltPickle}
+	
+	/call pressGiveButton |press the Give button
 
 /return
 
-sub radish()
+sub Event_Radishing()
 	/tar Radit Zsh
-	:MoveToRaditzsh
-	/if (${Target.Distance}>30) {
-		/delay 3
-		/moveto id ${Target.ID}
-		/goto :MoveToRaditzsh
-	}
+	/call moveToTarget
 	
 	/delay 3
 	/say radishes
-	/delay 5
-	/call taketask
+	
+	/delay ${dlyTaskAccept}
+	/doevents |stop macro if task is unavailable
+	/call pressTaskAcceptButton |press accept task button
 
 	/declare handin int local
 	/for handin 1 to 4
-		/ctrlkey /itemnotify ${sltRadish} leftmouseup
-		/click left target
-		/delay 7
+		/call handItemFromSlot ${sltRadish}
 	/next handin
 	
-	/delay 3
-	/notify GiveWnd GVW_Give_Button leftmouseup
+	/call pressGiveButton |press the Give button
 
-	/delay 5
-	/ctrlkey /itemnotify ${sltHorse} leftmouseup
-	/click left target
-	/delay 5
-	/notify GiveWnd GVW_Give_Button leftmouseup
+	/call handItemFromSlot ${sltHorse}
+	
+	/call pressGiveButton |press the Give button
 /return
 
-sub saibaman()	
+sub Event_Saibamaning()	
 	/tar Snapp Aple	
-	:MoveToSnappaple
-	/if (${Target.Distance}>30) {
-		/delay 3
-		/moveto id ${Target.ID}
-		/goto :MoveToSnappaple
-	}
+	/call moveToTarget
 	
 	/delay 3
 	/say Drinks
-	/delay 5
-	/call taketask
+	
+	/delay ${dlyTaskAccept}
+	/doevents |stop macro if task is unavailable
+	/call pressTaskAcceptButton |press accept task button
 	
 	/declare handin int local
 	/for handin 1 to 4
-		/ctrlkey /itemnotify ${sltSaibaman} leftmouseup
-		/click left target
-		/delay 7
+		/call handItemFromSlot ${sltSaibaman}
 	/next handin
 	
-	/delay 3
-	/notify GiveWnd GVW_Give_Button leftmouseup
+	/call pressGiveButton |press the Give button
 
-	/delay 5
-	/ctrlkey /itemnotify ${sltMug} leftmouseup
-	/click left target
-	/delay 5
-	/notify GiveWnd GVW_Give_Button leftmouseup
+	/call handItemFromSlot ${sltMug}
+	
+	/call pressGiveButton |press the Give button
 	
 	/declare rewards int local
-	/for rewards 1 to 7
+	/for rewards 1 to ${dlypressGiveButton}
 		/autoinv
 		/delay 5
 	/next rewards
 /return
 
-sub vegetables()
+sub Event_Vegetabling()
 	/tar Prince Vegetable
-	:MoveToPrince
-	/if (${Target.Distance}>30) {
-		/delay 3
-		/moveto id ${Target.ID}
-		/goto :MoveToPrince
-	}
+	/call moveToTarget
 	
 	/delay 3
 	/say Salad
-	/delay 5
-	/call taketask
 	
-	/delay 5
-	/ctrlkey /itemnotify ${sltCutCarrots} leftmouseup
-	/click left target
-	/delay 7
+	/delay ${dlyTaskAccept}
+	/doevents |stop macro if task is unavailable
+	/call pressTaskAcceptButton |press accept task button
 	
-	/ctrlkey /itemnotify ${sltBoiledShrimp} leftmouseup
-	/click left target
-	/delay 7
-	
-	/ctrlkey /itemnotify ${sltChoppedRadish} leftmouseup
-	/click left target
-	/delay 7
-	
-	/ctrlkey /itemnotify ${sltPickleSauce} leftmouseup
-	/click left target
-	/delay 7
-	
-	/notify GiveWnd GVW_Give_Button leftmouseup
-	/delay 7
+	/call handItemFromSlot ${sltCutCarrots}
+	/call handItemFromSlot ${sltBoiledShrimp}
+	/call handItemFromSlot ${sltChoppedRadish}
+	/call handItemFromSlot ${sltPickleSauce}
+	/call pressGiveButton |press the Give button
 	
 	
-	/ctrlkey /itemnotify ${sltJuice} leftmouseup
-	/click left target
-	/delay 5
-
-	/delay 3
-	/notify GiveWnd GVW_Give_Button leftmouseup
+	/call handItemFromSlot ${sltJuice}
+	/call pressGiveButton |press the Give button
 
 	/declare rewards int local
 	/for rewards 1 to 6
@@ -284,11 +231,51 @@ sub vegetables()
 	/next rewards
 /return
 
-sub taketask()
+sub pressTaskAcceptButton()
+	:backToTask
 	/if (${Window[TaskSelectWnd]})	{
-		/delay 5
+		/delay ${dlyTaskAccept}
 		/notify TaskSelectWnd TSEL_AcceptButton leftmouseup
+		/goto :backToTask
 	}
 	
-	/delay 5
+	/delay ${dlyTaskAccept}
+/return
+
+sub pressGiveButton()
+	:backTopressGiveButton
+	/if (${Window[GiveWnd]}) {
+		/delay ${dlypressGiveButton}	
+		/notify GiveWnd GVW_Give_Button leftmouseup
+		/goto :backTopressGiveButton
+	}
+	
+	/delay ${dlypressGiveButton}
+/return
+
+sub handItemFromSlot()
+	/if (${Param0.Equal[0]}) {
+		/echo Can't find item
+		/return
+	}
+	/delay ${dlypressGiveButton}
+	/ctrlkey /itemnotify ${Param0} leftmouseup
+	/click left target
+	
+	/delay ${dlypressGiveButton}
+/return
+
+sub moveToTarget
+	:keepMovingToTarget
+	/if (${Target.Distance}>30) {
+		/delay 3
+		/moveto id ${Target.ID}
+		/goto :keepMovingToTarget
+	}
+/return
+
+sub Event_NoTaskAvailable(noDailyMessage)
+	/echo No Task Available for ${noDailyMessage}
+	
+	/endmacro
 /return
