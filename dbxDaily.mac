@@ -1,0 +1,294 @@
+|**
+	Ocean Green Village Dailys
+	
+	Written By: Jaara
+	Date Written: 31 July 2021
+	
+	Description:
+		Walk close to the NPCs, type in /mac dbxDaily [quest]
+		Quests are Shrimp, Carrots, Cucumbers, Radish, Saibaman, Vegetables
+		
+		You should probably make a social for each command
+		/mac dbxDaily carrots
+		/mac dbxDaily shrimp
+		/mac dbxDaily cucumbers
+		/mac dbxDaily radish
+		/mac dbxDaily saibaman
+		/mac dbxDaily vegetables
+		
+		example: /mac dbxDaily carrots
+			this will run the carrots turn in
+			
+			it will attempt to get close enough to the npc to turn in the items, but wont jump over the fences.
+
+	Store Carrots/Radishes/Shrimp/Saibaman Brains/Cucumbers in Pack #9
+	
+		Carrots: Pack#9 Slot #1
+		Radish: Pack#9 Slot #2
+		Shrimp: Pack#9 Slot #3
+		Saibaman Brains: Pack#9 Slot #4
+		Cucumbers: Pack#9 Slot #5
+		Reward from Snapp Ple (the juice used for the salad): Pack#9 Slot #6
+	
+	Store Items from bosses Icy Mug/Jumbo Shrimp/Pickle Juice/Horse Radish is Pack#8
+		Icy Mug: Pack#8 Slot #1
+		Jumbo Shrimp: Pack#8 Slot #2
+		Pickle Juice: Pack#8 Slot #3
+		Horse Radish: Pack#8 Slot #4
+
+	Place Rewards from each NPC in the boss bag, doesn't matter exactly which slot, as long as they're Pack#8 Slots #5, #6, #7, #8
+**|
+
+sub main()
+	| ItemSlot Definations
+	
+	/if (!${Defined[sltCarrot]}) /declare sltCarrot int outer ${InvSlot[Pack9].Item.Item[1].InvSlot}
+	/if (!${Defined[sltRadish]}) /declare sltRadish int outer ${InvSlot[Pack9].Item.Item[2].InvSlot}
+	/if (!${Defined[sltShrimp]}) /declare sltShrimp int outer ${InvSlot[Pack9].Item.Item[3].InvSlot}
+	/if (!${Defined[sltSaibaman]}) /declare sltSaibaman int outer ${InvSlot[Pack9].Item.Item[4].InvSlot}
+	/if (!${Defined[sltCucumber]}) /declare sltCucumber int outer ${InvSlot[Pack9].Item.Item[5].InvSlot}
+	
+	/if (!${Defined[sltJuice]}) /declare sltJuice int outer ${InvSlot[Pack9].Item.Item[6].InvSlot}
+
+	/if (!${Defined[sltMug]}) /declare sltMug int outer ${InvSlot[Pack8].Item.Item[1].InvSlot}
+	/if (!${Defined[sltJumbo]}) /declare sltJumbo int outer ${InvSlot[Pack8].Item.Item[2].InvSlot}
+	/if (!${Defined[sltPickle]}) /declare sltPickle int outer ${InvSlot[Pack8].Item.Item[3].InvSlot}
+	/if (!${Defined[sltHorse]}) /declare sltHorse int outer ${InvSlot[Pack8].Item.Item[4].InvSlot}
+
+	/if (!${Defined[sltCutCarrots]}) /declare sltCutCarrots int outer ${InvSlot[Pack8].Item.Item[5].InvSlot}
+	/if (!${Defined[sltBoiledShrimp]}) /declare sltBoiledShrimp int outer ${InvSlot[Pack8].Item.Item[6].InvSlot}
+	/if (!${Defined[sltPickleSauce]}) /declare sltPickleSauce int outer ${InvSlot[Pack8].Item.Item[7].InvSlot}
+	/if (!${Defined[sltChoppedRadish]}) /declare sltChoppedRadish int outer ${InvSlot[Pack8].Item.Item[8].InvSlot}
+	
+	| Calls
+	/if (${Param0.Equal[shrimp]}) /call shrimp
+	/if (${Param0.Equal[carrots]}) /call carrots
+	/if (${Param0.Equal[cucumbers]}) /call cucumbers
+	/if (${Param0.Equal[radish]}) /call radish
+	/if (${Param0.Equal[saibaman]}) /call saibaman
+	/if (${Param0.Equal[salad]}) /call vegetables
+	/if (${Param0.Equal[taketask]}) /call taketask
+	
+/return
+
+
+sub shrimp()
+	/tar Krill In
+	:MoveToKrillin
+	/if (${Target.Distance}>30) {
+		/delay 3
+		/moveto id ${Target.ID}
+		/goto :MoveToKrillin
+	}
+	
+	/delay 3
+	/say shrimps
+	/delay 5
+	/call taketask
+
+	/declare handin int local
+	/for handin 1 to 4
+		/ctrlkey /itemnotify ${sltShrimp} leftmouseup
+		/click left target
+		/delay 7
+	/next handin
+	
+	/delay 3
+	/notify GiveWnd GVW_Give_Button leftmouseup
+
+	/delay 5
+	/ctrlkey /itemnotify ${sltJumbo} leftmouseup
+	/click left target
+	/delay 5
+	/notify GiveWnd GVW_Give_Button leftmouseup
+	
+	| Place shrimp in bag
+	/delay 5
+	/itemnotify ${InvSlot[Pack8].Item.Item[5].InvSlot} leftmousedown
+	
+
+/return
+
+sub carrots()
+	/tar Kak Carrot
+	:MoveToKakCarrot
+	/if (${Target.Distance}>30) {
+		/delay 3
+		/moveto id ${Target.ID}
+		/goto :MoveToKakCarrot
+	}
+	
+	/delay 3
+	/say carrots
+	/delay 5
+	/call taketask
+
+	/declare handin int local
+	/for handin 1 to 4
+		/ctrlkey /itemnotify ${sltCarrot} leftmouseup
+		/click left target
+		/delay 7
+	/next handin
+	
+	/delay 3
+	/notify GiveWnd GVW_Give_Button leftmouseup
+
+/return
+
+sub cucumbers()
+	/tar Picco Lo
+	:MoveToPiccolo
+	/if (${Target.Distance}>30) {
+		/delay 3
+		/moveto id ${Target.ID}
+		/goto :MoveToPiccolo
+	}
+	
+	/delay 3
+	/say cucumbers
+	/delay 5
+	/call taketask
+
+	/declare handin int local
+	/for handin 1 to 4
+		/ctrlkey /itemnotify ${sltCucumber} leftmouseup
+		/click left target
+		/delay 7
+	/next handin
+	
+	/delay 3
+	/notify GiveWnd GVW_Give_Button leftmouseup
+
+	/delay 5
+	/ctrlkey /itemnotify ${sltPickle} leftmouseup
+	/click left target
+	/delay 5
+	/notify GiveWnd GVW_Give_Button leftmouseup
+
+/return
+
+sub radish()
+	/tar Radit Zsh
+	:MoveToRaditzsh
+	/if (${Target.Distance}>30) {
+		/delay 3
+		/moveto id ${Target.ID}
+		/goto :MoveToRaditzsh
+	}
+	
+	/delay 3
+	/say radishes
+	/delay 5
+	/call taketask
+
+	/declare handin int local
+	/for handin 1 to 4
+		/ctrlkey /itemnotify ${sltRadish} leftmouseup
+		/click left target
+		/delay 7
+	/next handin
+	
+	/delay 3
+	/notify GiveWnd GVW_Give_Button leftmouseup
+
+	/delay 5
+	/ctrlkey /itemnotify ${sltHorse} leftmouseup
+	/click left target
+	/delay 5
+	/notify GiveWnd GVW_Give_Button leftmouseup
+/return
+
+sub saibaman()	
+	/tar Snapp Aple	
+	:MoveToSnappaple
+	/if (${Target.Distance}>30) {
+		/delay 3
+		/moveto id ${Target.ID}
+		/goto :MoveToSnappaple
+	}
+	
+	/delay 3
+	/say Drinks
+	/delay 5
+	/call taketask
+	
+	/declare handin int local
+	/for handin 1 to 4
+		/ctrlkey /itemnotify ${sltSaibaman} leftmouseup
+		/click left target
+		/delay 7
+	/next handin
+	
+	/delay 3
+	/notify GiveWnd GVW_Give_Button leftmouseup
+
+	/delay 5
+	/ctrlkey /itemnotify ${sltMug} leftmouseup
+	/click left target
+	/delay 5
+	/notify GiveWnd GVW_Give_Button leftmouseup
+	
+	/declare rewards int local
+	/for rewards 1 to 7
+		/autoinv
+		/delay 5
+	/next rewards
+/return
+
+sub vegetables()
+	/tar Prince Vegetable
+	:MoveToPrince
+	/if (${Target.Distance}>30) {
+		/delay 3
+		/moveto id ${Target.ID}
+		/goto :MoveToPrince
+	}
+	
+	/delay 3
+	/say Salad
+	/delay 5
+	/call taketask
+	
+	/delay 5
+	/ctrlkey /itemnotify ${sltCutCarrots} leftmouseup
+	/click left target
+	/delay 7
+	
+	/ctrlkey /itemnotify ${sltBoiledShrimp} leftmouseup
+	/click left target
+	/delay 7
+	
+	/ctrlkey /itemnotify ${sltChoppedRadish} leftmouseup
+	/click left target
+	/delay 7
+	
+	/ctrlkey /itemnotify ${sltPickleSauce} leftmouseup
+	/click left target
+	/delay 7
+	
+	/notify GiveWnd GVW_Give_Button leftmouseup
+	/delay 7
+	
+	
+	/ctrlkey /itemnotify ${sltJuice} leftmouseup
+	/click left target
+	/delay 5
+
+	/delay 3
+	/notify GiveWnd GVW_Give_Button leftmouseup
+
+	/declare rewards int local
+	/for rewards 1 to 6
+		/autoinv
+		/delay 5
+	/next rewards
+/return
+
+sub taketask()
+	/if (${Window[TaskSelectWnd]})	{
+		/delay 5
+		/notify TaskSelectWnd TSEL_AcceptButton leftmouseup
+	}
+	
+	/delay 5
+/return
